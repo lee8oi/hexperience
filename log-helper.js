@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Hexperience Log Helper
 // @namespace    https://github.com/lee8oi/hexperience
-// @version      0.4
+// @version      0.5
 // @description  Log database & helper for Hacker Experience (forked from pohky's Log Helper).
 // @author       lee8oi
 // @match        *://hackerexperience.com/*
@@ -80,8 +80,7 @@ if ($('#link0[href=log]').length) {
     $('form.log input.btn').before('<input class="btn btn-inverse" id="backuplocallog" type="button" value="Backup" style="width: 80px;" title="Save Log to Database">');
     $('#backuplocallog').after('<span>     </span><input class="btn btn-inverse" id="clearlocallog" type="button" value="Clear" style="width: 80px;"><span>     </span>');
 } else if ($('.internet.page-log').length) {
-    $('form.log input.btn').before('<input class="btn btn-inverse" id="backupweblog" type="button" value="Backup" style="width: 80px;" title="Save Log to Database">');
-    $('#backupweblog').after('<span>     </span><input class="btn btn-inverse" id="hidemeweb" type="button" value="Hide Me" style="width: 80px;" title="Clear only lines with your IP"><span>     </span>');
+    $('form.log input.btn').before('<input class="btn btn-inverse" id="backupweblog" type="button" value="Backup" style="width: 80px;" title="Save Log to Database"> ');
 }
 
 // ############### Local Log DB Function Stuff
@@ -172,23 +171,31 @@ function loadLocalLogs(){
 
 // ############### Internet Log DB Function Stuff
 
-$('#hidemeweb').click(function() {
-    if ($('form.log').length) {
+function hideMe() {
+    if ($('form.log').find('.logarea').val().length > 0) {
         var logLines = $('form.log').find('.logarea').val().split('\n');
         var newLines = [];
+        var foundIP = false;
 
         $.each(logLines, function(i, el) {
-            if (el.indexOf($('.header-ip-show').text()) === -1)
+            if (el.indexOf($('.header-ip-show').text()) != -1) {
+                foundIP = true;
+            } else {
                 newLines.push(el);
+            }
         });
-
-        $('form.log').find('.logarea').val(newLines.join('\n'));
-        $('form.log').submit();
-    }
-    else {
+        if (foundIP) {
+            $('form.log').find('.logarea').val(newLines.join('\n'));
+            $('form.log').submit();
+        }
+    } else {
         console.log('No log found');
     }
-});
+}
+
+if (window.location.href.indexOf("internet") != -1) {
+    setTimeout(hideMe, 500);
+}
 
 function loadWebLogs(){
     var ipList = GM_listValues();
