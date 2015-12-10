@@ -2,7 +2,7 @@
 // @name         Hexperience Log Helper
 // @namespace    https://github.com/lee8oi/hexperience
 // @version      0.5
-// @description  Log database & helper for Hacker Experience (forked from pohky's Log Helper).
+// @description  Log helper with database & auto hide-me for Hacker Experience (forked from pohky's Log Helper).
 // @author       lee8oi
 // @match        *://hackerexperience.com/*
 // @require      https://ajax.googleapis.com/ajax/libs/jquery/2.1.4/jquery.min.js
