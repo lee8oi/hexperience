@@ -1,8 +1,8 @@
 // ==UserScript==
 // @name         Hexperience Tools
 // @namespace    https://github.com/lee8oi/hexperience
-// @version      0.1
-// @description  Log helper with auto hide-me & clear buttons.
+// @version      0.2
+// @description  Log helper tools with auto hide-me.
 // @author       lee8oi
 // @match        *://hackerexperience.com/*
 // @require      https://ajax.googleapis.com/ajax/libs/jquery/2.1.4/jquery.min.js
@@ -12,7 +12,42 @@
 // @grant        GM_deleteValue
 // ==/UserScript==
 
-// Clear buttons
+/*
+    Alert handling
+*/
+
+function alertText() {
+    var alertArray = $(".alert.alert-success").text().split("\n");
+    var alertText = alertArray.filter(function(val) {
+    	return val.length > 1;
+    });
+    if (alertText.length > 0) {
+        return alertText[0].trim();
+    } else {
+        return;
+    }
+}
+
+function successAlert(text) {
+    switch (true) {
+        case text === "Success! Software installed.":
+            return true;
+        case text === "Success! Software successfully hidden.":
+            return true;
+        case text === "Success! Software successfully uploaded.":
+            return true;
+    }
+    return false;
+}
+
+// Switch to logs on success alert (to trigger auto hideme)
+if (window.location.href.indexOf("internet") != -1 && successAlert(alertText())) {
+    window.location.replace("http://hackerexperience.com/internet?view=logs");
+}
+
+/*
+    Clear log buttons
+*/
 
 if ($('#link2').text() == " Log file" || $('#link0').text() == " Log File") {
     $('form.log input.btn').before('<input class="btn btn-inverse" id="clearlog" type="button" value="Clear" style="width: 80px;"><span>     </span>');
@@ -27,7 +62,9 @@ $('#clearlog').click(function(){
     }
 });
 
-// Auto hide-me
+/*
+    Auto hide-me
+*/
 
 function hideMe() {
     var logArea = $('form.log').find('.logarea'), val = logArea.val();
