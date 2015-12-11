@@ -2,7 +2,7 @@
 // @name         Hexperience Tools
 // @namespace    https://github.com/lee8oi/hexperience
 // @version      0.4
-// @description  Log helper tools. Includes auto hide-me, auto ip-scraper with database, and log clear buttons.
+// @description  Hacker Experience log helper tools. Includes auto hide-me, auto ip-scraper with database, and log clear buttons.
 // @author       lee8oi
 // @match        *://hackerexperience.com/*
 // @require      https://ajax.googleapis.com/ajax/libs/jquery/2.1.4/jquery.min.js
