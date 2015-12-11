@@ -29,13 +29,23 @@ function alertText() {
 }
 
 function successAlert(text) {
-    switch (true) {
-        case text === "Success! Software installed.":
-            return true;
-        case text === "Success! Software successfully hidden.":
-            return true;
-        case text === "Success! Software successfully uploaded.":
-            return true;
+    if (text) {
+        switch (true) {
+            case text === "Success! Software installed.":
+                return true;
+            case text === "Success! Software successfully hidden.":
+                return true;
+            case text === "Success! Software successfully uploaded.":
+                return true;
+            case text === "Success! Software successfully deleted.":
+                return true;
+            case text === "Success! Software successfully downloaded.":
+                return true;
+            case text.indexOf("virus removed") != -1:
+                return true;
+            case text.indexOf("viruses removed") != -1:
+                return true;
+        }
     }
     return false;
 }
