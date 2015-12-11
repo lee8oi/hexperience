@@ -74,10 +74,10 @@ function loadIpLogs(dbName){
     }
     $('a[id=deletelocal]').click(function(){
         var name = $(this).attr('name');
-        var db = JSON.parse(GM_getValue("localDb"));
+        var db = JSON.parse(GM_getValue(dbName));
         delete db[name];
         $('div[id="'+ name +'"]').remove();
-        GM_setValue("localDb", JSON.stringify(db));
+        GM_setValue(dbName, JSON.stringify(db));
     });
 }
 
@@ -112,14 +112,19 @@ function scrapeIPs(text) {
 function saveIPs(dbName, ipArray) {
     if (typeof(ipArray) == "object" && ipArray.length > 0) {
         var text = GM_getValue(dbName);
+        var myIp = GM_getValue("myIp");
         var db = new Object;
         if (text && typeof(text) === 'string' && text.length > 0) {
             db = JSON.parse(text);
             for (i in ipArray) {
+                if (ipArray[i] == myIp) continue;
                 if (!db[ipArray[i]]) db[ipArray[i]] = true;
             }
         } else {
-            for (i in ipArray) db[ipArray[i]] = true;
+            for (i in ipArray) {
+                if (ipArray[i] == myIp) continue;
+                db[ipArray[i]] = true;
+            }
         }
         var json = JSON.stringify(db);
         GM_setValue(dbName, json);
@@ -207,11 +212,7 @@ $('#clearlog').click(function(){
 */
 
 function hideMe() {
-    var logArea = $('form.log').find('.logarea'), val = logArea.val(), myIp = $('.header-ip-show').text();
-    var storedIp = GM_getValue("myIp");
-    if (storedIp && storedIP.length > 0) {
-        if (storedIp != myIp) GM_setValue("myIp", myIp)
-    }
+    var logArea = $('form.log').find('.logarea'), val = logArea.val(), myIp = GM_getValue("myIp");
     if (typeof(val) != "undefined" && val.length > 0) {
         var logLines = val.split('\n'), newLines = [], foundIP = false;
         $.each(logLines, function(i, el) {
@@ -229,5 +230,17 @@ function hideMe() {
 }
 
 if (window.location.href.indexOf("internet") != -1) {
-    setTimeout(hideMe, 500);
+    if (!GM_getValue("myIp")) {
+        setTimeout(hideMe, 500);
+    } else {
+        hideMe();
+    }
 }
+
+$(document).on("ready", ".header-ip-show", function(){
+     var myIp = $('.header-ip-show').text();
+     var storedIp = GM_getValue("myIp");
+     if (storedIp != myIp) {
+         GM_setValue("myIp", myIp);
+     }
+});
