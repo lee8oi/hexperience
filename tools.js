@@ -1,16 +1,146 @@
 // ==UserScript==
 // @name         Hexperience Tools
 // @namespace    https://github.com/lee8oi/hexperience
-// @version      0.2
-// @description  Log helper tools with auto hide-me.
+// @version      0.3
+// @description  Log helper tools. Includes auto hide-me, auto ip-scraper with database, and log clear buttons.
 // @author       lee8oi
 // @match        *://hackerexperience.com/*
 // @require      https://ajax.googleapis.com/ajax/libs/jquery/2.1.4/jquery.min.js
 // @grant        GM_setValue
 // @grant        GM_getValue
+// @grant        GM_addStyle
 // @grant        GM_listValues
 // @grant        GM_deleteValue
 // ==/UserScript==
+
+/*
+    IP database
+*/
+
+if (window.location.href.search('ipdb') > 0) {
+    $('#sidebar ul li.active').attr('class','');
+    $('#sidebar ul').append('<li class="active"><a href="log?ipdb"><i class="fa fa-inverse fa-list-ul"></i> <span>IP Database</span></a></li>');
+    ipDBPage();
+} else {
+    $('#sidebar ul').append('<li><a href="log?ipdb"><i class="fa fa-inverse fa-list-ul"></i> <span>IP Database</span></a></li>');
+}
+GM_addStyle('.fa-list-ul {content: "\f0ca";}');
+
+function ipDBPage(){
+    document.title = 'IP Database';
+    $('.nav.nav-tabs:first').html('<li class="link active" id="tablocal"><a href="#" id="locallog"><span class="icon-tab he16-internet_log"></span>Local</a></li>');
+    $('.nav.nav-tabs:first').append('<li class="link" id="tabweb"><a href="#" id="weblog"><span class="icon-tab he16-internet_log"></span>Internet</a></li>');
+    $('.label.label-info').remove();
+    $('#link0').attr('href','log?ipdb'); $('#link0').html('IPDB');
+    $('#content-header h1').html('IP Database');
+    setupIpDbPage('local', 'Local');
+    loadIpLogs("localDb");
+}
+
+function setupIpDbPage(dbtype, dbname){
+    $('.widget-content').html(`
+        <div class="span12">
+            <div class="widget-box text-left" style="margin-left: auto;margin-right: auto; width: 350px;">
+                <div class="widget-title"><span class="icon"><span class="he16-collect_info"></span></span>
+                    <h5>Select ` + dbname + ` IP</h5>
+                </div>
+                <div class="widget-content ` + dbtype + `ipdb"><div id="logdblist"></div></div>
+            </div>
+        </div>` );
+}
+
+$('#tablocal').click(function(){
+    $('#tablocal').attr('class','link active');
+    $('#tabweb').attr('class','link');
+    setupIpDbPage('local', 'Local');
+    loadIpLogs("localDb");
+});
+
+$('#tabweb').click(function(){
+    $('#tabweb').attr('class','link active');
+    $('#tablocal').attr('class','link');
+    setupIpDbPage('web', 'Internet');
+    loadIpLogs("internetDb");
+});
+
+function loadIpLogs(dbName){
+    var text = GM_getValue(dbName);
+    var db = JSON.parse(text);
+    for (i in db) {
+        $('#logdblist').append('<div id="'+ i +'"><a href="http://hackerexperience.com/internet?ip=' + i + '" id="loadlocal" name="' + i + '">'+ i +'</a>&nbsp;&nbsp;&nbsp;'+
+               '<a href="#" id="deletelocal" name="'+ i +'">[delete]</a>'+
+               '</br></div>'
+              );
+    }
+    $('a[id=deletelocal]').click(function(){
+        var name = $(this).attr('name');
+        var db = JSON.parse(GM_getValue("localDb"));
+        delete db[name];
+        $('div[id="'+ name +'"]').remove();
+        GM_setValue("localDb", JSON.stringify(db));
+    });
+}
+
+/*
+    Auto ip-scraper
+*/
+
+function uniqueArray(arr) {
+    var unique = [], map = [];
+        for (i in arr) {
+            if (map[arr[i]]) {
+                continue;
+            } else {
+                map[arr[i]] = true;
+                unique[unique.length] = arr[i];
+            }
+        }
+    return unique;
+}
+
+function scrapeIPs(text) {
+    if (typeof(text) === "string") {
+        var re = /\b\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}\b/g;
+        var found = text.match(re);
+        if (found && found.length > 0) {
+            return uniqueArray(found);
+        }
+    }
+    return;
+}
+
+function saveIPs(dbName, ipArray) {
+    if (typeof(ipArray) == "object" && ipArray.length > 0) {
+        var text = GM_getValue(dbName);
+        var db = new Object;
+        if (text && typeof(text) === 'string' && text.length > 0) {
+            db = JSON.parse(text);
+            for (i in ipArray) {
+                if (!db[ipArray[i]]) db[ipArray[i]] = true;
+            }
+        } else {
+            for (i in ipArray) db[ipArray[i]] = true;
+        }
+        var json = JSON.stringify(db);
+        GM_setValue(dbName, json);
+    }
+}
+
+if (window.location.href.indexOf("hackerexperience.com/log") != -1) {
+    var log = $('form.log').find('.logarea');
+    if (log && log.length > 0) {
+        text = log.val();
+        saveIPs("localDb", scrapeIPs(text));
+    }
+}
+
+if (window.location.href.indexOf("hackerexperience.com/internet") != -1) {
+    var log = $('form.log').find('.logarea');
+    if (log && log.length > 0) {
+        text = log.val();
+        saveIPs("internetDb", scrapeIPs(text));
+    }
+}
 
 /*
     Alert handling
@@ -77,11 +207,15 @@ $('#clearlog').click(function(){
 */
 
 function hideMe() {
-    var logArea = $('form.log').find('.logarea'), val = logArea.val();
+    var logArea = $('form.log').find('.logarea'), val = logArea.val(), myIp = $('.header-ip-show').text();
+    var storedIp = GM_getValue("myIp");
+    if (storedIp && storedIP.length > 0) {
+        if (storedIp != myIp) GM_setValue("myIp", myIp)
+    }
     if (typeof(val) != "undefined" && val.length > 0) {
         var logLines = val.split('\n'), newLines = [], foundIP = false;
         $.each(logLines, function(i, el) {
-            if (el.indexOf($('.header-ip-show').text()) != -1) {
+            if (el.indexOf(myIp) != -1) {
                 foundIP = true;
             } else {
                 if (el.length > 0) newLines.push(el);
