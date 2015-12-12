@@ -98,13 +98,18 @@ function loadIpLogs(dbName){
     var removeFromAll = function (name) {
         var local = JSON.parse(GM_getValue("localDb"));
         var internet = JSON.parse(GM_getValue("internetDb"));
+        var ignore = JSON.parse(GM_getValue("ignoreDb"));
         delete internet[name];
         delete local[name];
+        delete ignore[name];
         GM_setValue("localDb", JSON.stringify(local));
         GM_setValue("internetDb", JSON.stringify(internet));
+        GM_setValue("ignoreDb", JSON.stringify(ignore));
     }
     $('a[id=deleteip]').click(function(){
         var name = $(this).attr('name');
+        var db = JSON.parse(GM_getValue(dbName));
+        delete db[name];
         removeFromAll(name);
         $('div[id="'+ name +'"]').remove();
     });
