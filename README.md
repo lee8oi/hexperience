@@ -1,4 +1,4 @@
-# Hexperience
+# Hexperience Tools
 Advanced helper tools for Hacker Experience.
 ## Features
 * Auto hide-me automatically removes log entries containing the local IP and saves the log.
