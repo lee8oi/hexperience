@@ -221,6 +221,8 @@ function successAlert(text) {
                 return true;
             case text === "Success! Software successfully downloaded.":
                 return true;
+            case text === "Success! Software successfully seeked.":
+                return true;
             case text.indexOf("virus removed") != -1:
                 return true;
             case text.indexOf("viruses removed") != -1:

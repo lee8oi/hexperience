@@ -2,7 +2,7 @@
 Hacker Experience log helper tools. Includes auto hide-me, auto ip-scraper with database, and log clear buttons.
 ## Features
 * Auto hide-me automatically removes log entries containing the local IP and saves the log.
-* Automatically switch to internet log after successful upload, download, install, hidden, and virus removal.
+* Automatically switch to internet log after successful upload, download, install, hidden, seeked, and virus removal.
   * Useful for triggering auto hide-me to quickly hide activity.
 * IP scraper automatically collects IP addresses from logs and stores them in the IP Database.
   * Database is sorted by local, internet, and ignore.
