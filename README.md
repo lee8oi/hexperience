@@ -1,5 +1,5 @@
 # Hexperience
-Hacker Experience log helper tools. Includes auto hide-me, auto ip-scraper with database, and log clear buttons.
+Advanced helper tools for Hacker Experience.
 ## Features
 * Auto hide-me automatically removes log entries containing the local IP and saves the log.
 * Automatically switch to internet log after successful upload, download, install, hidden, seeked, and virus removal.
@@ -8,3 +8,4 @@ Hacker Experience log helper tools. Includes auto hide-me, auto ip-scraper with 
   * Database is sorted by local, internet, and ignore.
   * Ignoring an IP causes the ip-scraper to ignore that IP in the future.
 * Add's Clear buttons to log boxes to clear the entire log in one click.
+* Add's favorites capability to Hacked Database for marking favorite servers.

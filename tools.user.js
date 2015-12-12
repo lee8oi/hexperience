@@ -1,8 +1,8 @@
 // ==UserScript==
 // @name         Hexperience Tools
 // @namespace    https://github.com/lee8oi/hexperience
-// @version      0.6
-// @description  Hacker Experience log helper tools. Includes auto hide-me, auto ip-scraper with database, and log clear buttons.
+// @version      0.7
+// @description  Advanced helper tools for Hacker Experience.
 // @author       lee8oi
 // @match        *://hackerexperience.com/*
 // @require      https://ajax.googleapis.com/ajax/libs/jquery/2.1.4/jquery.min.js
@@ -78,7 +78,7 @@ function setupIpDbPage(dbtype, dbname) {
                 <div class="widget-content ` + dbtype + `ipdb"><div id="logdblist"></div></div>
             </div>
         </div>` );
-        GM_addStyle('#logdblist { max-height: 600px; overflow: auto; padding: 5px; }');
+        GM_addStyle('#logdblist { max-height: 400px; overflow: auto; padding: 5px; }');
 }
 
 function ipDBPage(){
@@ -166,7 +166,7 @@ function saveIPs(dbName, ipArray) {
                 if (!db[ipArray[i]] ) db[ipArray[i]] = true;
             }
         } else {
-            for (i in ipArray) {
+            for (var i in ipArray) {
                 if (ipArray[i] == myIp || igDb[ipArray[i]]) continue;
                 db[ipArray[i]] = true;
             }
@@ -294,3 +294,44 @@ $(document).on("ready", ".header-ip-show", function(){
          GM_setValue("myIp", myIp);
      }
 });
+
+/*
+    Hacked Database mods
+*/
+
+function toggleFavorite(ip, elem) {
+    var favorites = JSON.parse(GM_getValue("favorites"));
+    if (favorites[ip]) {
+        delete favorites[ip];
+        elem.removeClass("fa-star");
+        elem.addClass("fa-star-o");
+    } else {
+        favorites[ip] = true;
+        elem.removeClass("fa-star-o");
+        elem.addClass("fa-star");
+    }
+    GM_setValue("favorites", JSON.stringify(favorites));
+}
+
+if (window.location.href.indexOf("hackerexperience.com/list") != -1 ) {
+    GM_addStyle('.fa-star {content: "\f005";}');
+    GM_addStyle('.fa-star-o {content: "\f006";}');
+    GM_addStyle('i.favorite {color: #DAA520;}');
+    var favText = GM_getValue("favorites"), favorites = {};
+    if (!favText) {
+        GM_setValue("favorites", "{}");
+    }
+    favorites = JSON.parse(GM_getValue("favorites"));
+    $("ul.list.ip li").each(function(){
+        var entry = $(this);
+        var ip = entry.find(".list-ip #ip").text();
+        if (favorites[ip]) {
+            entry.find(".list-actions").append('<i class="favorite fa-2x fa fa-inverse fa-star"></i>');
+        } else {
+            entry.find(".list-actions").append('<i class="favorite fa-2x fa fa-inverse fa-star-o"></i>');
+        }
+        entry.find("i.favorite").click(function() {
+            toggleFavorite(ip, $(this))
+        })
+    });
+}
