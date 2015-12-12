@@ -56,7 +56,7 @@ function loadIpLogs(dbName) {
 
     if (dbName != "ignoreDb") {
         $('a[id=ignoreip]').click(function () {
-            var name = $(this).attr('name'), db = JSON.parse(GM_getValue(dbName));
+            var name = $(this).attr('name');
             removeFromAll(name);
             $('div[id="'+ name +'"]').remove();
             dbig = JSON.parse(GM_getValue("ignoreDb"));
@@ -78,6 +78,7 @@ function setupIpDbPage(dbtype, dbname) {
                 <div class="widget-content ` + dbtype + `ipdb"><div id="logdblist"></div></div>
             </div>
         </div>` );
+        GM_addStyle('#logdblist { max-height: 600px; overflow: auto; padding: 5px; }');
 }
 
 function ipDBPage(){
