@@ -95,13 +95,6 @@ function loadIpLogs(dbName){
     if (dbName != "ignoreDb") {
         GM_addStyle('#logdblist a#ignoreip {float: right;}');
     }
-    $('a[id=deleteip]').click(function(){
-        var name = $(this).attr('name');
-        var db = JSON.parse(GM_getValue(dbName));
-        delete db[name];
-        $('div[id="'+ name +'"]').remove();
-        GM_setValue(dbName, JSON.stringify(db));
-    });
     var removeFromAll = function (name) {
         var local = JSON.parse(GM_getValue("localDb"));
         var internet = JSON.parse(GM_getValue("internetDb"));
@@ -110,6 +103,12 @@ function loadIpLogs(dbName){
         GM_setValue("localDb", JSON.stringify(local));
         GM_setValue("internetDb", JSON.stringify(internet));
     }
+    $('a[id=deleteip]').click(function(){
+        var name = $(this).attr('name');
+        removeFromAll(name);
+        $('div[id="'+ name +'"]').remove();
+    });
+
     if (dbName != "ignoreDb") {
         $('a[id=ignoreip]').click(function(){
             var name = $(this).attr('name'), db = JSON.parse(GM_getValue(dbName));
