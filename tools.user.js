@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Hexperience Tools
 // @namespace    https://github.com/lee8oi/hexperience
-// @version      0.4
+// @version      0.5
 // @description  Hacker Experience log helper tools. Includes auto hide-me, auto ip-scraper with database, and log clear buttons.
 // @author       lee8oi
 // @match        *://hackerexperience.com/*
@@ -102,13 +102,19 @@ function loadIpLogs(dbName){
         $('div[id="'+ name +'"]').remove();
         GM_setValue(dbName, JSON.stringify(db));
     });
-
+    var removeFromAll = function (name) {
+        var local = JSON.parse(GM_getValue("localDb"));
+        var internet = JSON.parse(GM_getValue("internetDb"));
+        delete internet[name];
+        delete local[name];
+        GM_setValue("localDb", JSON.stringify(local));
+        GM_setValue("internetDb", JSON.stringify(internet));
+    }
     if (dbName != "ignoreDb") {
         $('a[id=ignoreip]').click(function(){
             var name = $(this).attr('name'), db = JSON.parse(GM_getValue(dbName));
-            delete db[name];
+            removeFromAll(name);
             $('div[id="'+ name +'"]').remove();
-            GM_setValue(dbName, JSON.stringify(db));
             dbig = JSON.parse(GM_getValue("ignoreDb"));
             if (!db[name]) {
                 dbig[name] = true;
