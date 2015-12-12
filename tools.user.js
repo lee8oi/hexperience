@@ -83,14 +83,14 @@ function setupIpDbPage(dbtype, dbname) {
 
 function ipDBPage(){
     document.title = 'IP Database';
-    $('.nav.nav-tabs:first').html('<li class="link active" id="tablocal"><a href="#" id="locallog"><span class="icon-tab he16-internet_log"></span>Local</a></li>');
-    $('.nav.nav-tabs:first').append('<li class="link" id="tabweb"><a href="#" id="weblog"><span class="icon-tab he16-internet_log"></span>Internet</a></li>');
+    $('.nav.nav-tabs:first').html('<li class="link active" id="tabweb"><a href="#" id="weblog"><span class="icon-tab he16-internet_log"></span>Internet</a></li>');
+    $('.nav.nav-tabs:first').append('<li class="link" id="tablocal"><a href="#" id="locallog"><span class="icon-tab he16-internet_log"></span>Local</a></li>');
     $('.nav.nav-tabs:first').append('<li class="link" id="tabignore"><a href="#" id="ignorelog"><span class="icon-tab he16-internet_log"></span>Ignored</a></li>');
     $('.label.label-info').remove();
     $('#link0').attr('href','log?ipdb'); $('#link0').html('IPDB');
     $('#content-header h1').html('IP Database');
-    setupIpDbPage('local', 'Local');
-    loadIpLogs("localDb");
+    setupIpDbPage('internet', 'Internet');
+    loadIpLogs("internetDb");
 }
 
 if (window.location.href.search('ipdb') > 0) {
