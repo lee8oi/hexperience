@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Hexperience Tools
 // @namespace    https://github.com/lee8oi/hexperience
-// @version      0.5
+// @version      0.6
 // @description  Hacker Experience log helper tools. Includes auto hide-me, auto ip-scraper with database, and log clear buttons.
 // @author       lee8oi
 // @match        *://hackerexperience.com/*
@@ -80,15 +80,16 @@ function loadIpLogs(dbName){
         GM_setValue(dbName, "{}");
     }
     var db = JSON.parse(text);
-    for (i in db) {
+    var whichBtns = function() {
+        if (dbName != "ignoreDb") {
+            return '<a href="#" id="deleteip" name="'+ i +'">[delete]</a><a href="#" id="ignoreip" name="'+ i +'">[ignore]</a>';
+        } else {
+            return '<a href="#" id="deleteip" name="'+ i +'">[delete]</a>'
+        }
+    }
+    for (var i in db) {
         $('#logdblist').append('<div id="'+ i +'"><a href="http://hackerexperience.com/internet?ip=' + i + '" id="loadlocal" name="' + i + '">'+ i +'</a>&nbsp;&nbsp;&nbsp;' +
-        function() {
-            if (dbName != "ignoreDb") {
-                return '<a href="#" id="deleteip" name="'+ i +'">[delete]</a><a href="#" id="ignoreip" name="'+ i +'">[ignore]</a>';
-            } else {
-                return '<a href="#" id="deleteip" name="'+ i +'">[delete]</a>'
-            }
-        }() + '</br></div>');
+        whichBtns() + '</br></div>');
     }
     GM_addStyle('#logdblist a#loadlocal {float: left;}');
     GM_addStyle('#logdblist a#deleteip {float: right;}');
@@ -132,7 +133,7 @@ function loadIpLogs(dbName){
 
 function uniqueArray(arr) {
     var unique = [], map = [];
-        for (i in arr) {
+        for (var i in arr) {
             if (map[arr[i]]) {
                 continue;
             } else {
@@ -157,7 +158,7 @@ function scrapeIPs(text) {
 function saveIPs(dbName, ipArray) {
     if (typeof(ipArray) == "object" && ipArray.length > 0) {
         var dbText = GM_getValue(dbName), myIp = GM_getValue("myIp"), igText = GM_getValue("ignoreDb");
-        var db = new Object;
+        var db = new Object();
         if (igText && igText.length > 0) igDb = JSON.parse(igText)
         if (dbText && typeof(dbText) === 'string' && dbText.length > 0) {
             db = JSON.parse(dbText);
