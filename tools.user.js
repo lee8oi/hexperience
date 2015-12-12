@@ -108,8 +108,6 @@ function loadIpLogs(dbName){
     }
     $('a[id=deleteip]').click(function(){
         var name = $(this).attr('name');
-        var db = JSON.parse(GM_getValue(dbName));
-        delete db[name];
         removeFromAll(name);
         $('div[id="'+ name +'"]').remove();
     });
@@ -120,7 +118,7 @@ function loadIpLogs(dbName){
             removeFromAll(name);
             $('div[id="'+ name +'"]').remove();
             dbig = JSON.parse(GM_getValue("ignoreDb"));
-            if (!db[name]) {
+            if (!dbig[name]) {
                 dbig[name] = true;
             }
             GM_setValue("ignoreDb", JSON.stringify(dbig));
@@ -237,6 +235,9 @@ if (window.location.href.indexOf("internet") != -1 && successAlert(alertText()))
     window.location.replace("http://hackerexperience.com/internet?view=logs");
 }
 
+if (window.location.href.indexOf("software") != -1 && alertText() === "Success! Software successfully downloaded.") {
+    window.location.replace("http://hackerexperience.com/internet?view=logs");
+}
 /*
     Clear log buttons
 */
