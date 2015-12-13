@@ -22,64 +22,76 @@ function loadIpLogs(dbName) {
     if (!text) {
         GM_setValue(dbName, "{}");
     }
-    var whichBtns = function (i) {
-        if (dbName !== "ignoreDb") {
-            return '<a href="#" id="deleteip" name="' + i + '">[delete]</a> <a href="#" id="ignoreip" name="' +
-            i + '">[ignore]</a> <a href="http://hackerexperience.com/internet?ip=' + i +'&action=hack&method=bf" id="bruteip" name="' +
-            i + '">[brute]</a>';
-        }
-        return '<a href="#" id="deleteip" name="' + i + '">[delete]</a>';
+    var getBtns = function (i) {
+        var savedLink = '<a href="#" id="saveip" name="' + i + '">[save]</a>';
+        var ignoreLink = '<a href="#" id="ignoreip" name="' + i + '">[ignore]</a>';
+        if (dbName == "savedDb") savedLink = "";
+        if (dbName == "ignoreDb") ignoreLink = "";
+        return '<a href="#" id="deleteip" name="' + i + '">[delete]</a> ' + savedLink + ' ' + ignoreLink + ' <a href="http://hackerexperience.com/internet?ip=' + i +'&action=hack&method=bf" id="bruteip" name="' +
+        i + '">[brute]</a>';
     };
     for (var i in db) {
         $('#logdblist').append('<div id="' + i + '"><a href="http://hackerexperience.com/internet?ip=' + i + '" id="loadlocal" name="' + i + '">' + i + '</a>&nbsp;&nbsp;&nbsp;' +
-        whichBtns(i) + '</br></div>');
+        getBtns(i) + '</br></div>');
     }
     GM_addStyle('#logdblist a#loadlocal {float: left;}');
-    GM_addStyle('#logdblist a#deleteip, #logdblist a#bruteip {float: right;}');
+    GM_addStyle('#logdblist a#deleteip, #logdblist a#bruteip, #logdblist a#saveip {float: right;}');
     if (dbName != "ignoreDb") {
         GM_addStyle('#logdblist a#ignoreip {float: right;}');
     }
     var removeFromAll = function (name) {
-        var local = JSON.parse(GM_getValue("localDb"));
-        var internet = JSON.parse(GM_getValue("internetDb"));
-        var ignore = JSON.parse(GM_getValue("ignoreDb"));
+        var local = JSON.parse(GM_getValue("localDb")),
+        internet = JSON.parse(GM_getValue("internetDb")),
+        ignore = JSON.parse(GM_getValue("ignoreDb")),
+        saved = JSON.parse(GM_getValue("savedDb"));
         delete internet[name];
         delete local[name];
         delete ignore[name];
+        delete saved[name];
         GM_setValue("localDb", JSON.stringify(local));
         GM_setValue("internetDb", JSON.stringify(internet));
         GM_setValue("ignoreDb", JSON.stringify(ignore));
+        GM_setValue("savedDb", JSON.stringify(saved));
     };
     $('a[id=deleteip]').click(function () {
         var name = $(this).attr('name');
         removeFromAll(name);
         $('div[id="'+ name +'"]').remove();
     });
-
     if (dbName != "ignoreDb") {
         $('a[id=ignoreip]').click(function () {
             var name = $(this).attr('name');
             removeFromAll(name);
             $('div[id="'+ name +'"]').remove();
             dbig = JSON.parse(GM_getValue("ignoreDb"));
-            if (!dbig[name]) {
-                dbig[name] = true;
-            }
+            if (!dbig[name]) dbig[name] = true;
             GM_setValue("ignoreDb", JSON.stringify(dbig));
+        });
+    }
+    if (dbName != "savedDb") {
+        $('a[id=saveip]').click(function () {
+            var name = $(this).attr('name'), saved = {}, saveText = GM_getValue("savedDb");
+            if (!saveText) saveText = "{}";
+            saved = JSON.parse(saveText);
+            removeFromAll(name);
+            $('div[id="'+ name +'"]').remove();
+            if (!saved[name]) saved[name] = true;
+            GM_setValue("savedDb", JSON.stringify(saved));
         });
     }
 }
 
 function setupIpDbPage(dbtype, dbname) {
-    $('.widget-content').html(`
-        <div class="span12">
-            <div class="widget-box text-left" style="margin-left: auto;margin-right: auto; width: 350px;">
-                <div class="widget-title"><span class="icon"><span class="he16-collect_info"></span></span>
-                    <h5>Select ` + dbname + ` IP</h5>
-                </div>
-                <div class="widget-content ` + dbtype + `ipdb"><div id="logdblist"></div></div>
-            </div>
-        </div>` );
+    /*jshint multistr: true */
+    $('.widget-content').html('\
+        <div class="span12">\
+            <div class="widget-box text-left" style="margin-left: auto;margin-right: auto; width: 400px;">\
+                <div class="widget-title"><span class="icon"><span class="he16-collect_info"></span></span>\
+                    <h5>Select ` + dbname + ` IP</h5>\
+                </div>\
+                <div class="widget-content ` + dbtype + `ipdb"><div id="logdblist"></div></div>\
+            </div>\
+        </div>' );
         GM_addStyle('#logdblist { max-height: 400px; overflow: auto; padding: 5px; }');
 }
 
@@ -87,6 +99,7 @@ function ipDBPage(){
     document.title = 'IP Database';
     $('.nav.nav-tabs:first').html('<li class="link active" id="tabweb"><a href="#" id="weblog"><span class="icon-tab he16-internet_log"></span>Internet</a></li>');
     $('.nav.nav-tabs:first').append('<li class="link" id="tablocal"><a href="#" id="locallog"><span class="icon-tab he16-internet_log"></span>Local</a></li>');
+    $('.nav.nav-tabs:first').append('<li class="link" id="tabsaved"><a href="#" id="savedlog"><span class="icon-tab he16-internet_log"></span>Saved</a></li>');
     $('.nav.nav-tabs:first').append('<li class="link" id="tabignore"><a href="#" id="ignorelog"><span class="icon-tab he16-internet_log"></span>Ignored</a></li>');
     $('.label.label-info').remove();
     $('#link0').attr('href','log?ipdb'); $('#link0').html('IPDB');
@@ -108,6 +121,7 @@ $('#tablocal').click(function() {
     $('#tablocal').attr('class','link active');
     $('#tabweb').attr('class','link');
     $('#tabignore').attr('class','link');
+    $('#tabsaved').attr('class', 'link');
     setupIpDbPage('local', 'Local');
     loadIpLogs("localDb");
 });
@@ -116,14 +130,25 @@ $('#tabweb').click(function() {
     $('#tabweb').attr('class','link active');
     $('#tablocal').attr('class','link');
     $('#tabignore').attr('class','link');
+    $('#tabsaved').attr('class', 'link');
     setupIpDbPage('web', 'Internet');
     loadIpLogs("internetDb");
+});
+
+$('#tabsaved').click(function() {
+    $('#tabweb').attr('class','link ');
+    $('#tablocal').attr('class','link');
+    $('#tabignore').attr('class','link');
+    $('#tabsaved').attr('class', 'link active');
+    setupIpDbPage('save', 'Saved');
+    loadIpLogs("savedDb");
 });
 
 $('#tabignore').click(function() {
     $('#tabignore').attr('class','link active');
     $('#tablocal').attr('class','link');
     $('#tabweb').attr('class','link');
+    $('#tabsaved').attr('class', 'link');
     setupIpDbPage('ignore', 'Ignored');
     loadIpLogs("ignoreDb");
 });
@@ -158,19 +183,21 @@ function scrapeIPs(text) {
 
 function saveIPs(dbName, ipArray) {
     if (typeof(ipArray) == "object" && ipArray.length > 0) {
-        var dbText = GM_getValue(dbName), myIp = GM_getValue("myIp"), igText = GM_getValue("ignoreDb");
+        var dbText = GM_getValue(dbName), myIp = GM_getValue("myIp"), igText = GM_getValue("ignoreDb"),
+        saveText = GM_getValue('savedDb');
         var db = {};
         if (igText && igText.length > 0) igDb = JSON.parse(igText);
+        if (saveText && saveText.length > 0) saveDb = JSON.parse(saveText);
         if (dbText && typeof(dbText) === 'string' && dbText.length > 0) {
             db = JSON.parse(dbText);
             for (var i in ipArray) {
-                if (ipArray[i] == myIp || igDb[ipArray[i]]) continue;
+                if (ipArray[i] == myIp || igDb[ipArray[i]] || saveDb[ipArray[i]]) continue;
                 if (!db[ipArray[i]] ) db[ipArray[i]] = true;
             }
         } else {
-            for (var i in ipArray) {
-                if (ipArray[i] == myIp || igDb[ipArray[i]]) continue;
-                db[ipArray[i]] = true;
+            for (var x in ipArray) {
+                if (ipArray[x] == myIp || igDb[ipArray[x]]) continue;
+                db[ipArray[x]] = true;
             }
         }
         var json = JSON.stringify(db);
@@ -200,11 +227,11 @@ if (window.location.href.indexOf("hackerexperience.com/internet") != -1) {
 
 function alertText() {
     var alertArray = $(".alert.alert-success").text().split("\n");
-    var alertText = alertArray.filter(function(val) {
+    var aText = alertArray.filter(function(val) {
     	return val.length > 1;
     });
-    if (alertText.length > 0) {
-        return alertText[0].trim();
+    if (aText.length > 0) {
+        return aText[0].trim();
     } else {
         return;
     }
@@ -334,7 +361,7 @@ if (window.location.href.indexOf("hackerexperience.com/list") != -1 ) {
             entry.find(".list-actions").append('<i class="favorite fa-2x fa fa-inverse fa-star-o"></i>');
         }
         entry.find("i.favorite").click(function() {
-            toggleFavorite(ip, $(this))
-        })
+            toggleFavorite(ip, $(this));
+        });
     });
 }
