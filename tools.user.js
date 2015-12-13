@@ -274,7 +274,7 @@ if (window.location.href.indexOf("software") != -1 && alertText() === "Success! 
     Clear log buttons
 */
 
-if ($('#link2').text() == " Log file" || $('#link0').text() == " Log File") {
+if ($('#link2').text() == " Log file" || $('#link0').text() == " Log File" || $('#link2').text() == " Log File") {
     $('form.log input.btn').before('<input class="btn btn-inverse" id="clearlog" type="button" value="Clear" style="width: 80px;"><span>     </span>');
 }
 
@@ -360,8 +360,64 @@ if (window.location.href.indexOf("hackerexperience.com/list") != -1 ) {
         } else {
             entry.find(".list-actions").append('<i class="favorite fa-2x fa fa-inverse fa-star-o"></i>');
         }
-        entry.find("i.favorite").click(function() {
+        entry.find("i.favorite").click(function () {
             toggleFavorite(ip, $(this));
         });
     });
+}
+
+/*
+    Log monitor (ip-scraper will grab any IP's)
+*/
+
+function refreshPage(){
+    if (GM_getValue(window.location.pathname + "monitorLog")) location.reload();
+}
+
+function scrapeLog() {
+    var logText = $('form.log').find('.logarea').val(),
+    stored = new Array(), storedText = GM_getValue(window.location.pathname + "storedLogs");
+    if (!storedText) storedText = "";
+    if (storedText.length > 0) stored = storedText.split("\n");
+    if (logText !== "undefined" && logText.length > 0) {
+        var split = logText.split("\n");
+        for (var i in split) {
+            if (stored.indexOf(split[i]) === -1) {
+                stored.push(split[i]);
+            }
+        }
+        if (stored.length > 0) GM_setValue(window.location.pathname + "storedLogs", stored.join("\n").trim());
+    }
+}
+
+if ($('#link0').text() == " Log File" || $('#link2').text() == " Log file" || $('#link2').text() == " Log File") {
+    var monitor = GM_getValue(window.location.pathname + "monitorLog");
+    if (monitor === "undefined") {
+        GM_setValue(window.location.pathname + "monitorLog", false);
+        monitor = false;
+    }
+    var addClick = function () {
+        $('form.log #logmonitor').click(function () {
+            monitor = true;
+            GM_setValue(window.location.pathname + "monitorLog", true);
+            $('input#logmonitor').attr("value", "Stop");
+            setTimeout(refreshPage, 3000);
+        });
+    }
+    if (monitor) {
+        $('form.log input#clearlog').before('<input class="btn btn-inverse" id="logmonitor" type="button" value="Stop" style="width: 80px;"><span>     </span>');
+        $('form.log #logmonitor').click(function () {
+            GM_setValue(window.location.pathname + "monitorLog", false);
+            $('input#logmonitor').attr("value", "Monitor");
+            monitor = false;
+            addClick();
+            $("textarea.logarea").val(GM_getValue(window.location.pathname + "storedLogs"));
+            GM_setValue(window.location.pathname + "storedLogs", "");
+        });
+        scrapeLog();
+        setTimeout(refreshPage, 3000);
+    } else {
+        $('form.log #clearlog').before('<input class="btn btn-inverse" id="logmonitor" type="button" value="Monitor" style="width: 80px;"><span>     </span>');
+        addClick();
+    }
 }
