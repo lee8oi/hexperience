@@ -87,9 +87,9 @@ function setupIpDbPage(dbtype, dbname) {
         <div class="span12">\
             <div class="widget-box text-left" style="margin-left: auto;margin-right: auto; width: 400px;">\
                 <div class="widget-title"><span class="icon"><span class="he16-collect_info"></span></span>\
-                    <h5>Select ` + dbname + ` IP</h5>\
+                    <h5>Select ' + dbname + ' IP</h5>\
                 </div>\
-                <div class="widget-content ` + dbtype + `ipdb"><div id="logdblist"></div></div>\
+                <div class="widget-content ' + dbtype + 'ipdb"><div id="logdblist"></div></div>\
             </div>\
         </div>' );
         GM_addStyle('#logdblist { max-height: 400px; overflow: auto; padding: 5px; }');
