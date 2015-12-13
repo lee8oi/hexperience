@@ -317,13 +317,13 @@ if (window.location.href.indexOf("internet") != -1) {
     }
 }
 
-$(document).on("ready", ".header-ip-show", function(){
-     var myIp = $('.header-ip-show').text();
-     var storedIp = GM_getValue("myIp");
-     if (storedIp != myIp) {
-         GM_setValue("myIp", myIp);
-     }
-});
+setTimeout(function(){
+    var myIp = $('.header-ip-show').text();
+    var storedIp = GM_getValue("myIp");
+    if (storedIp != myIp) {
+        GM_setValue("myIp", myIp);
+    }
+}, 500);
 
 /*
     Hacked Database mods
