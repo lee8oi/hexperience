@@ -24,7 +24,9 @@ function loadIpLogs(dbName) {
     }
     var whichBtns = function (i) {
         if (dbName !== "ignoreDb") {
-            return '<a href="#" id="deleteip" name="' + i + '">[delete]</a> <a href="#" id="ignoreip" name="' + i + '">[ignore]</a>';
+            return '<a href="#" id="deleteip" name="' + i + '">[delete]</a> <a href="#" id="ignoreip" name="' +
+            i + '">[ignore]</a> <a href="http://hackerexperience.com/internet?ip=' + i +'&action=hack&method=bf" id="bruteip" name="' +
+            i + '">[brute]</a>';
         }
         return '<a href="#" id="deleteip" name="' + i + '">[delete]</a>';
     };
@@ -33,7 +35,7 @@ function loadIpLogs(dbName) {
         whichBtns(i) + '</br></div>');
     }
     GM_addStyle('#logdblist a#loadlocal {float: left;}');
-    GM_addStyle('#logdblist a#deleteip {float: right;}');
+    GM_addStyle('#logdblist a#deleteip, #logdblist a#bruteip {float: right;}');
     if (dbName != "ignoreDb") {
         GM_addStyle('#logdblist a#ignoreip {float: right;}');
     }
@@ -240,6 +242,7 @@ if (window.location.href.indexOf("internet") != -1 && successAlert(alertText()))
 if (window.location.href.indexOf("software") != -1 && alertText() === "Success! Software successfully downloaded.") {
     window.location.replace("http://hackerexperience.com/internet?view=logs");
 }
+
 /*
     Clear log buttons
 */
