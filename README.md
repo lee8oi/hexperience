@@ -15,3 +15,5 @@ Advanced helper tools for Hacker Experience.
   * Refreshes log page automatically and scrapes logs.
   * Can be separately enabled on local & internet logs.
   * Results are displayed in the current log window when monitor is stopped.
+  * Automatically removes bitcoin and fund transfer lines in local logs and saves.
+  * Ignores localhost lines in local logs.

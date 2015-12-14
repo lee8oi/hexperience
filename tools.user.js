@@ -288,44 +288,6 @@ $('#clearlog').click(function(){
 });
 
 /*
-    Auto hide-me
-*/
-
-function hideMe() {
-    var logArea = $('form.log').find('.logarea'), val = logArea.val(), myIp = GM_getValue("myIp");
-    if (typeof(val) != "undefined" && val.length > 0) {
-        var logLines = val.split('\n'), newLines = [], foundIP = false;
-        $.each(logLines, function(i, el) {
-            if (el.indexOf(myIp) != -1) {
-                foundIP = true;
-            } else {
-                if (el.length > 0) newLines.push(el);
-            }
-        });
-        if (foundIP) {
-            logArea.val(newLines.join('\n'));
-            $('form.log').submit();
-        }
-    }
-}
-
-if (window.location.href.indexOf("internet") != -1) {
-    if (!GM_getValue("myIp")) {
-        setTimeout(hideMe, 500);
-    } else {
-        hideMe();
-    }
-}
-
-setTimeout(function(){
-    var myIp = $('.header-ip-show').text();
-    var storedIp = GM_getValue("myIp");
-    if (storedIp != myIp) {
-        GM_setValue("myIp", myIp);
-    }
-}, 500);
-
-/*
     Hacked Database mods
 */
 
@@ -370,23 +332,44 @@ if (window.location.href.indexOf("hackerexperience.com/list") != -1 ) {
     Log monitor (ip-scraper will grab any IP's)
 */
 
+var moneyRegex = /^\d{4}-\d{2}-\d{2}\s\d{2}:\d{2}\s-\slocalhost.*Funds were transferred.*|^Server\s[\[\d\.\]]+\smined.*BTC\.|[\d\.]+\sBTC\swere\stransferred to address\s+\w+\s+using\skey\s+\w+|^\d{4}-\d{2}-\d{2}\s\d{2}:\d{2}\s-.*\[\d+\.\d+\.\d+\.\d+\] on account \w+ using key \w+/;
+var fullRegex = /^\d{4}-\d{2}-\d{2}\s\d{2}:\d{2}\s-\slocalhost.*|^Server\s[\[\d\.\]]+\smined.*BTC\.|[\d\.]+\sBTC\swere\stransferred to address\s+\w+\s+using\skey\s+\w+/;
+
 function refreshPage(){
     if (GM_getValue(window.location.pathname + "monitorLog")) location.reload();
 }
 
+function checkLine(line, reg) {
+    var res = line.match(reg);
+    if (res) {
+        return true;
+    }
+    return false;
+}
+
 function scrapeLog() {
-    var logText = $('form.log').find('.logarea').val(),
+    var logArea = $('form.log').find('.logarea'), logText = logArea.val(), logsFound = false, logResult = new Array();
     stored = new Array(), storedText = GM_getValue(window.location.pathname + "storedLogs");
     if (!storedText) storedText = "";
     if (storedText.length > 0) stored = storedText.split("\n");
     if (logText !== "undefined" && logText.length > 0) {
         var split = logText.split("\n");
         for (var i in split) {
-            if (stored.indexOf(split[i]) === -1) {
-                stored.push(split[i]);
+            var line = split[i].trim();
+            if (line.length === 0) continue;
+            if (window.location.pathname === "/log") {
+                if (checkLine(line, moneyRegex) == true) logsFound = true;
+                else logResult.push(line);
+            }
+            if (stored.indexOf(line) === -1 && line.length > 0 && checkLine(line, fullRegex) === false) {
+                stored.push(line);
             }
         }
         if (stored.length > 0) GM_setValue(window.location.pathname + "storedLogs", stored.join("\n").trim());
+    }
+    if (logsFound) {
+        logArea.val(logResult.join("\n"));
+        $('form.log').submit();
     }
 }
 
@@ -421,3 +404,41 @@ if ($('#link0').text() == " Log File" || $('#link2').text() == " Log file" || $(
         addClick();
     }
 }
+
+/*
+    Auto hide-me
+*/
+
+function hideMe() {
+    var logArea = $('form.log').find('.logarea'), val = logArea.val(), myIp = GM_getValue("myIp");
+    if (typeof(val) != "undefined" && val.length > 0) {
+        var logLines = val.split('\n'), newLines = [], foundIP = false;
+        $.each(logLines, function(i, el) {
+            if (el.indexOf(myIp) != -1) {
+                foundIP = true;
+            } else {
+                if (el.length > 0) newLines.push(el);
+            }
+        });
+        if (foundIP) {
+            logArea.val(newLines.join('\n'));
+            $('form.log').submit();
+        }
+    }
+}
+
+if (window.location.href.indexOf("internet") != -1) {
+    if (!GM_getValue("myIp")) {
+        setTimeout(hideMe, 500);
+    } else {
+        hideMe();
+    }
+}
+
+setTimeout(function(){
+    var myIp = $('.header-ip-show').text();
+    var storedIp = GM_getValue("myIp");
+    if (storedIp != myIp) {
+        GM_setValue("myIp", myIp);
+    }
+}, 500);
