@@ -11,9 +11,9 @@ Advanced helper tools for Hacker Experience.
   * Using brute immediately attempts to brute-force hack the IP.
 * Add's Clear buttons to log boxes to clear the entire log in one click.
 * Add's favorites capability to Hacked Database for marking favorite servers.
-* Basic log monitoring system.
+* Log monitoring system.
   * Refreshes log page automatically and scrapes logs.
   * Can be separately enabled on local & internet logs.
   * Results are displayed in the current log window when monitor is stopped.
   * Automatically removes bitcoin and fund transfer lines in local logs and saves.
-  * Ignores localhost lines in local logs.
+  * Ignores localhost lines in local logs to focus on the foreign logins.
