@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Hexperience Tools
 // @namespace    https://github.com/lee8oi/hexperience
-// @version      0.8
+// @version      0.8.1
 // @description  Advanced helper tools for Hacker Experience.
 // @author       lee8oi
 // @match        *://hackerexperience.com/*
@@ -19,10 +19,10 @@
 */
 
 function loadIpLogs(dbName) {
-    var text = GM_getValue(dbName), db = JSON.parse(text);
-    if (!text) {
+    if (GM_getValue(dbName) == "") {
         GM_setValue(dbName, "{}");
     }
+    var text = GM_getValue(dbName), db = JSON.parse(text);
     var getBtns = function (i) {
         var savedLink = '<a href="#" id="saveip" name="' + i + '">[save]</a>';
         var ignoreLink = '<a href="#" id="ignoreip" name="' + i + '">[ignore]</a>';
@@ -64,7 +64,7 @@ function loadIpLogs(dbName) {
             var name = $(this).attr('name');
             removeFromAll(name);
             $('div[id="'+ name +'"]').remove();
-            dbig = JSON.parse(GM_getValue("ignoreDb"));
+            var dbig = JSON.parse(GM_getValue("ignoreDb"));
             if (!dbig[name]) dbig[name] = true;
             GM_setValue("ignoreDb", JSON.stringify(dbig));
         });
@@ -333,11 +333,14 @@ if (window.location.href.indexOf("hackerexperience.com/list") != -1 ) {
     Log monitor (ip-scraper will grab any IP's)
 */
 
-var moneyRegex = /^\d{4}-\d{2}-\d{2}\s\d{2}:\d{2}\s-\slocalhost.*Funds were transferred.*|^Server\s[\[\d\.\]]+\smined.*BTC\.|[\d\.]+\sBTC\swere\stransferred to address\s+\w+\s+using\skey\s+\w+|^\d{4}-\d{2}-\d{2}\s\d{2}:\d{2}\s-.*\[\d+\.\d+\.\d+\.\d+\] on account \w+ using key \w+/;
+var moneyRegex = /^\d{4}-\d{2}-\d{2}\s\d{2}:\d{2}\s-\slocalhost.*Funds( were|) transferred.*|^Server\s[\[\d\.\]]+\smined.*BTC\.|[\d\.]+\sBTC\swere\stransferred to address\s+\w+\s+using\skey\s+\w+|^\d{4}-\d{2}-\d{2}\s\d{2}:\d{2}\s-.*\[\d+\.\d+\.\d+\.\d+\] on account \w+ using key \w+/;
 var fullRegex = /^\d{4}-\d{2}-\d{2}\s\d{2}:\d{2}\s-\slocalhost.*|^Server\s[\[\d\.\]]+\smined.*BTC\.|[\d\.]+\sBTC\swere\stransferred to address\s+\w+\s+using\skey\s+\w+/;
 
 function refreshPage(){
-    if (GM_getValue(window.location.pathname + "monitorLog")) location.reload();
+    if (window.location.href.search('ipdb') > 0) return; //dont refresh ipdb
+    if (GM_getValue(window.location.pathname + "monitorLog")) {
+        location.reload();
+    }
 }
 
 function checkLine(line, reg) {
@@ -374,6 +377,15 @@ function scrapeLog() {
     }
 }
 
+if ($('#cf-error-details h2[data-translate="what_happened"]').text().trim().length > 0) { //detect cloudflare error
+    setTimeout(refreshPage, 3000)
+}
+
+if (GM_getValue(window.location.pathname + "monitorLog")) {
+    console.log("started backup timeout");
+    setTimeout(refreshPage, 30000);//backup page refresher
+}
+
 if ($('#link0').text() == " Log File" || $('#link2').text() == " Log file" || $('#link2').text() == " Log File") {
     var monitor = GM_getValue(window.location.pathname + "monitorLog");
     if (monitor === "undefined") {
@@ -400,6 +412,7 @@ if ($('#link0').text() == " Log File" || $('#link2').text() == " Log file" || $(
         });
         scrapeLog();
         setTimeout(refreshPage, 3000);
+        setTimeout(refreshPage, 7000);//backup refresher for hangs
     } else {
         $('form.log #clearlog').before('<input class="btn btn-inverse" id="logmonitor" type="button" value="Monitor" style="width: 80px;"><span>     </span>');
         addClick();
