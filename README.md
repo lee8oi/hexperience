@@ -17,3 +17,4 @@ Advanced helper tools for Hacker Experience.
   * Results are displayed in the current log window when monitor is stopped.
   * Automatically removes bitcoin and fund transfer lines in local logs and saves.
   * Ignores localhost lines in local logs to focus on the foreign logins.
+* Add's login link to Hacked Database list to directly log into respective IP's.
