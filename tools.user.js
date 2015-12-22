@@ -19,7 +19,7 @@
 */
 
 function loadIpLogs(dbName) {
-    if (GM_getValue(dbName) == "") {
+    if (!GM_getValue(dbName) ) {
         GM_setValue(dbName, "{}");
     }
     var text = GM_getValue(dbName), db = JSON.parse(text);
