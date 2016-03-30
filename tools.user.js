@@ -4,7 +4,7 @@
 // @version      0.8.3
 // @description  Advanced helper tools for Hacker Experience.
 // @author       lee8oi
-// @match        *://hackerexperience.com/*
+// @match        *://legacy.hackerexperience.com/*
 // @run-at document-end
 // @require      https://ajax.googleapis.com/ajax/libs/jquery/2.1.4/jquery.min.js
 // @grant        GM_setValue
@@ -320,6 +320,7 @@ if (window.location.href.indexOf("hackerexperience.com/list") != -1 ) {
         var pass = $(this).find(".list-user span.small").get(1).firstChild.data;
         var url = $(this).find(".list-ip a").attr("href") + "&action=login&user=root&pass=" + pass
         $(this).find(".list-ip").after(' <a href="' + url + '" style="float:left;margin: 5px 5px 0px 5px;font-size:14px">[login]</a>');
+        console.log(url);
         var ip = entry.find(".list-ip #ip").text();
         if (favorites[ip]) {
             entry.find(".list-actions").append('<i class="favorite fa-2x fa fa-inverse fa-star"></i>');
