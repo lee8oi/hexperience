@@ -214,7 +214,7 @@ if (window.location.href.indexOf("hackerexperience.com/log") != -1) {
     }
 }
 
-if (window.location.href.indexOf("hackerexperience.com/internet") != -1) {
+if (window.location.href.indexOf("hackerexperience.com/internet?view=logs") != -1) {
     var log = $('form.log').find('.logarea');
     if (log && log.length > 0) {
         text = log.val();
