@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Hexperience Tools
 // @namespace    https://github.com/lee8oi/hexperience
-// @version      0.8.4
+// @version      0.8.5
 // @description  Advanced helper tools for Hacker Experience.
 // @author       lee8oi
 // @match        *://legacy.hackerexperience.com/*
