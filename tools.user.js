@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Hexperience Tools
 // @namespace    https://github.com/lee8oi/hexperience
-// @version      0.8.3
+// @version      0.8.4
 // @description  Advanced helper tools for Hacker Experience.
 // @author       lee8oi
 // @match        *://legacy.hackerexperience.com/*
@@ -28,11 +28,11 @@ function loadIpLogs(dbName) {
         var ignoreLink = '<a href="#" id="ignoreip" name="' + i + '">[ignore]</a>';
         if (dbName == "savedDb") savedLink = "";
         if (dbName == "ignoreDb") ignoreLink = "";
-        return '<a href="#" id="deleteip" name="' + i + '">[delete]</a> ' + savedLink + ' ' + ignoreLink + ' <a href="http://hackerexperience.com/internet?ip=' + i +'&action=hack&method=bf" id="bruteip" name="' +
+        return '<a href="#" id="deleteip" name="' + i + '">[delete]</a> ' + savedLink + ' ' + ignoreLink + ' <a href="http://legacy.hackerexperience.com/internet?ip=' + i +'&action=hack&method=bf" id="bruteip" name="' +
         i + '">[brute]</a>';
     };
     for (var i in db) {
-        $('#logdblist').append('<div id="' + i + '"><a href="http://hackerexperience.com/internet?ip=' + i + '" id="loadlocal" name="' + i + '">' + i + '</a>&nbsp;&nbsp;&nbsp;' +
+        $('#logdblist').append('<div id="' + i + '"><a href="http://legacy.hackerexperience.com/internet?ip=' + i + '" id="loadlocal" name="' + i + '">' + i + '</a>&nbsp;&nbsp;&nbsp;' +
         getBtns(i) + '</br></div>');
     }
     GM_addStyle('#logdblist a#loadlocal {float: left;}');
@@ -206,7 +206,7 @@ function saveIPs(dbName, ipArray) {
     }
 }
 
-if (window.location.href.indexOf("hackerexperience.com/log") != -1) {
+if (window.location.href.indexOf("legacy.hackerexperience.com/log") != -1) {
     var log = $('form.log').find('.logarea');
     if (log && log.length > 0) {
         text = log.val();
@@ -214,7 +214,7 @@ if (window.location.href.indexOf("hackerexperience.com/log") != -1) {
     }
 }
 
-if (window.location.href.indexOf("hackerexperience.com/internet") != -1) {
+if (window.location.href.indexOf("legacy.hackerexperience.com/internet") != -1) {
     var log = $('form.log').find('.logarea');
     if (log && log.length > 0) {
         text = log.val();
@@ -264,11 +264,11 @@ function successAlert(text) {
 
 // Switch to logs on success alert (to trigger auto hideme)
 if (window.location.href.indexOf("internet") != -1 && successAlert(alertText())) {
-    window.location.replace("http://hackerexperience.com/internet?view=logs");
+    window.location.replace("http://legacy.hackerexperience.com/internet?view=logs");
 }
 
 if (window.location.href.indexOf("software") != -1 && alertText() === "Success! Software successfully downloaded.") {
-    window.location.replace("http://hackerexperience.com/internet?view=logs");
+    window.location.replace("http://legacy.hackerexperience.com/internet?view=logs");
 }
 
 /*
@@ -306,7 +306,7 @@ function toggleFavorite(ip, elem) {
     GM_setValue("favorites", JSON.stringify(favorites));
 }
 
-if (window.location.href.indexOf("hackerexperience.com/list") != -1 ) {
+if (window.location.href.indexOf("legacy.hackerexperience.com/list") != -1 ) {
     GM_addStyle('.fa-star {content: "\f005";}');
     GM_addStyle('.fa-star-o {content: "\f006";}');
     GM_addStyle('i.favorite {color: #DAA520;}');
