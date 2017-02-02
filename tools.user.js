@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Hexperience Tools
 // @namespace    https://github.com/lee8oi/hexperience
-// @version      0.8.5
+// @version      0.8.6
 // @description  Advanced helper tools for Hacker Experience.
 // @author       lee8oi
 // @match        *://legacy.hackerexperience.com/*
@@ -318,7 +318,7 @@ if (window.location.href.indexOf("legacy.hackerexperience.com/list") != -1 ) {
     $("ul.list.ip li").each(function(){
         var entry = $(this);
         var pass = $(this).find(".list-user span.small").get(1).firstChild.data;
-        var url = $(this).find(".list-ip a").attr("href") + "&action=login&user=root&pass=" + pass
+        var url = $(this).find(".list-ip a").attr("href") + "&action=login&user=root&pass=" + pass;
         $(this).find(".list-ip").after(' <a href="' + url + '" style="float:left;margin: 5px 5px 0px 5px;font-size:14px">[login]</a>');
         console.log(url);
         var ip = entry.find(".list-ip #ip").text();
@@ -356,8 +356,8 @@ function checkLine(line, reg) {
 }
 
 function scrapeLog() {
-    var logArea = $('form.log').find('.logarea'), logText = logArea.val(), logsFound = false, logResult = new Array();
-    stored = new Array(), storedText = GM_getValue(window.location.pathname + "storedLogs");
+    var logArea = $('form.log').find('.logarea'), logText = logArea.val(), logsFound = false, logResult = [];
+    var stored = [], storedText = GM_getValue(window.location.pathname + "storedLogs");
     if (!storedText) storedText = "";
     if (storedText.length > 0) stored = storedText.split("\n");
     if (logText !== "undefined" && logText.length > 0) {
@@ -366,7 +366,7 @@ function scrapeLog() {
             var line = split[i].trim();
             if (line.length === 0) continue;
             if (window.location.pathname === "/log") {
-                if (checkLine(line, moneyRegex) == true) logsFound = true;
+                if (checkLine(line, moneyRegex) === true) logsFound = true;
                 else logResult.push(line);
             }
             if (stored.indexOf(line) === -1 && line.length > 0 && checkLine(line, fullRegex) === false) {
@@ -382,7 +382,7 @@ function scrapeLog() {
 }
 
 if ($('#cf-error-details h2[data-translate="what_happened"]').text().trim().length > 0) { //detect cloudflare error
-    setTimeout(refreshPage, 3000)
+    setTimeout(refreshPage, 3000);
 }
 
 if (GM_getValue(window.location.pathname + "monitorLog")) {
@@ -403,7 +403,7 @@ if ($('#link0').text() == " Log File" || $('#link2').text() == " Log file" || $(
             $('input#logmonitor').attr("value", "Stop");
             setTimeout(refreshPage, 3000);
         });
-    }
+    };
     if (monitor) {
         $('form.log input#clearlog').before('<input class="btn btn-inverse" id="logmonitor" type="button" value="Stop" style="width: 80px;"><span>     </span>');
         $('form.log #logmonitor').click(function () {
