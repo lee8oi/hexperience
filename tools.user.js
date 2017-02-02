@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Hexperience Tools
 // @namespace    https://github.com/lee8oi/hexperience
-// @version      0.8.6
+// @version      0.8.7
 // @description  Advanced helper tools for Hacker Experience.
 // @author       lee8oi
 // @match        *://legacy.hackerexperience.com/*
@@ -32,8 +32,10 @@ function loadIpLogs(dbName) {
         i + '">[brute]</a>';
     };
     for (var i in db) {
-        $('#logdblist').append('<div id="' + i + '"><a href="http://legacy.hackerexperience.com/internet?ip=' + i + '" id="loadlocal" name="' + i + '">' + i + '</a>&nbsp;&nbsp;&nbsp;' +
-        getBtns(i) + '</br></div>');
+		if (db.hasOwnProperty(i)) {
+			$('#logdblist').append('<div id="' + i + '"><a href="http://legacy.hackerexperience.com/internet?ip=' + i + '" id="loadlocal" name="' + i + '">' + i + '</a>&nbsp;&nbsp;&nbsp;' +
+			getBtns(i) + '</br></div>');
+		}
     }
     GM_addStyle('#logdblist a#loadlocal {float: left;}');
     GM_addStyle('#logdblist a#deleteip, #logdblist a#bruteip, #logdblist a#saveip {float: right;}');
@@ -191,12 +193,12 @@ function saveIPs(dbName, ipArray) {
         if (saveText && saveText.length > 0) saveDb = JSON.parse(saveText);
         if (dbText && typeof(dbText) === 'string' && dbText.length > 0) {
             db = JSON.parse(dbText);
-            for (var i in ipArray) {
+			for (i = 0; i < ipArray.length;i++) {
                 if (ipArray[i] == myIp || igDb[ipArray[i]] || saveDb[ipArray[i]]) continue;
                 if (!db[ipArray[i]] ) db[ipArray[i]] = true;
             }
         } else {
-            for (var x in ipArray) {
+			for (i = 0; i < ipArray.length;i++) {
                 if (ipArray[x] == myIp || igDb[ipArray[x]]) continue;
                 db[ipArray[x]] = true;
             }
@@ -362,7 +364,7 @@ function scrapeLog() {
     if (storedText.length > 0) stored = storedText.split("\n");
     if (logText !== "undefined" && logText.length > 0) {
         var split = logText.split("\n");
-        for (var i in split) {
+		for (i = 0; i < split.length; i++) {
             var line = split[i].trim();
             if (line.length === 0) continue;
             if (window.location.pathname === "/log") {
