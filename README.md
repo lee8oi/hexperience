@@ -1,5 +1,5 @@
 # Hexperience Tools
-Advanced helper tools for Hacker Experience.
+Advanced helper tools for Hacker Experience Legacy.
 ## Features
 * Auto hide-me automatically removes log entries containing the local IP and saves the log.
 * Automatically switch to internet log after successful upload, download, install, hidden, seeked, and virus removal.
