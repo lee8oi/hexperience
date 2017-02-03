@@ -350,7 +350,7 @@ function Regs() {
 	this.generating = /Server\s\[\d+\.\d+\.\d+\.\d+\].*(mined|mailed).*generating.*/;
 	this.transfer = /.*(Funds|)were transferred (to|).*/;
 	this.collected = /.*localhost collected.*/;
-	this.btLogin = /^\d{4}-\d{2}-\d{2}\s\d{2}:\d{2} - localhost logged.*using key.*/;
+	this.login = /^\d{4}-\d{2}-\d{2}\s\d{2}:\d{2} - localhost logged.*on account.*/;
 }
 
 var localRegs = new Regs();
