@@ -1,8 +1,8 @@
 // ==UserScript==
 // @name         Hexperience Tools
 // @namespace    https://github.com/lee8oi/hexperience
-// @version      0.8.7
-// @description  Advanced helper tools for Hacker Experience.
+// @version      0.8.8
+// @description  Advanced helper tools for Hacker Experience Legacy.
 // @author       lee8oi
 // @match        *://legacy.hackerexperience.com/*
 // @run-at document-end
@@ -339,9 +339,6 @@ if (window.location.href.indexOf("legacy.hackerexperience.com/list") != -1 ) {
     Log monitor (ip-scraper will grab any IP's)
 */
 
-var moneyRegex = /^\d{4}-\d{2}-\d{2}\s\d{2}:\d{2}\s-\slocalhost.*Funds( were|) transferred.*|^Server\s[\[\d\.\]]+\smined.*BTC\.|[\d\.]+\sBTC\swere\stransferred to address\s+\w+\s+using\skey\s+\w+|^\d{4}-\d{2}-\d{2}\s\d{2}:\d{2}\s-.*\[\d+\.\d+\.\d+\.\d+\] on account \w+ using key \w+/;
-var fullRegex = /^\d{4}-\d{2}-\d{2}\s\d{2}:\d{2}\s-\slocalhost.*|^Server\s[\[\d\.\]]+\smined.*BTC\.|[\d\.]+\sBTC\swere\stransferred to address\s+\w+\s+using\skey\s+\w+/;
-
 function refreshPage(){
     if (window.location.href.search('ipdb') > 0) return; //dont refresh ipdb
     if (GM_getValue(window.location.pathname + "monitorLog")) {
@@ -349,12 +346,22 @@ function refreshPage(){
     }
 }
 
-function checkLine(line, reg) {
-    var res = line.match(reg);
-    if (res) {
-        return true;
-    }
-    return false;
+function Regs() {
+	this.generating = /Server\s\[\d+\.\d+\.\d+\.\d+\].*(mined|mailed).*generating.*/;
+	this.transfer = /.*(Funds|)were transferred (to|).*/;
+	this.collected = /.*localhost collected.*/;
+}
+
+var localRegs = new Regs();
+var fullRegs = new Regs();
+fullRegs.localhost = /^\d{4}-\d{2}-\d{2}\s\d{2}:\d{2}\s-\slocalhost.*/;
+
+function checkLine(line, regObj) {
+	for (var prop in regObj) {
+		if (line.match(regObj[prop])) {
+			return true;
+		}
+	}
 }
 
 function scrapeLog() {
@@ -368,10 +375,10 @@ function scrapeLog() {
             var line = split[i].trim();
             if (line.length === 0) continue;
             if (window.location.pathname === "/log") {
-                if (checkLine(line, moneyRegex) === true) logsFound = true;
+				if (checkLine(line, localRegs) === true) logsFound = true;
                 else logResult.push(line);
             }
-            if (stored.indexOf(line) === -1 && line.length > 0 && checkLine(line, fullRegex) === false) {
+            if (stored.indexOf(line) === -1 && line.length > 0 && checkLine(line, fullRegs) === false) {
                 stored.push(line);
             }
         }
