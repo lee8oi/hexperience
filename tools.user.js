@@ -15,6 +15,48 @@
 // ==/UserScript==
 
 /*
+    Auto hide-me
+*/
+
+function hideMe() {
+    var logArea = $('form.log').find('.logarea'), val = logArea.val(), myIp = GM_getValue("myIp");
+    if (typeof(val) != "undefined" && val.length > 0) {
+        var logLines = val.split('\n'), newLines = [], foundIP = false;
+        $.each(logLines, function(i, el) {
+            if (el.indexOf(myIp) != -1) {
+                foundIP = true;
+            } else {
+                if (el.trim().length > 0) newLines.push(el);
+            }
+        });
+        if (foundIP) {
+            logArea.val(newLines.join('\n'));
+            $('form.log').submit();
+        }
+    }
+}
+
+/*
+	Update my IP
+*/
+
+setTimeout(function(){
+    var myIp = $('.header-ip-show').text();
+    var storedIp = GM_getValue("myIp");
+    if (storedIp != myIp) {
+        GM_setValue("myIp", myIp);
+    }
+}, 500);
+
+if (window.location.href.indexOf("internet") != -1) {
+    if (!GM_getValue("myIp")) {
+        setTimeout(hideMe, 500);
+    } else {
+        hideMe();
+    }
+}
+
+/*
     IP database
 */
 
@@ -432,41 +474,3 @@ if ($('#link0').text() == " Log File" || $('#link2').text() == " Log file" || $(
         addClick();
     }
 }
-
-/*
-    Auto hide-me
-*/
-
-function hideMe() {
-    var logArea = $('form.log').find('.logarea'), val = logArea.val(), myIp = GM_getValue("myIp");
-    if (typeof(val) != "undefined" && val.length > 0) {
-        var logLines = val.split('\n'), newLines = [], foundIP = false;
-        $.each(logLines, function(i, el) {
-            if (el.indexOf(myIp) != -1) {
-                foundIP = true;
-            } else {
-                if (el.length > 0) newLines.push(el);
-            }
-        });
-        if (foundIP) {
-            logArea.val(newLines.join('\n'));
-            $('form.log').submit();
-        }
-    }
-}
-
-if (window.location.href.indexOf("internet") != -1) {
-    if (!GM_getValue("myIp")) {
-        setTimeout(hideMe, 500);
-    } else {
-        hideMe();
-    }
-}
-
-setTimeout(function(){
-    var myIp = $('.header-ip-show').text();
-    var storedIp = GM_getValue("myIp");
-    if (storedIp != myIp) {
-        GM_setValue("myIp", myIp);
-    }
-}, 500);
