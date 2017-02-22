@@ -393,6 +393,8 @@ function Regs() {
 	this.transfer = /.*(Funds|)were transferred (to|).*/;
 	this.collected = /.*localhost collected.*/;
 	this.login = /^\d{4}-\d{2}-\d{2}\s\d{2}:\d{2} - localhost logged.*on account.*/;
+	this.bought = /.*localhost bought license.*/;
+	this.research = /.*localhost researched.*/;
 }
 
 var localRegs = new Regs();
