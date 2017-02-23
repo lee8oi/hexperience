@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Hexperience Tools
 // @namespace    https://github.com/lee8oi/hexperience
-// @version      0.8.8
+// @version      0.8.9
 // @description  Advanced helper tools for Hacker Experience Legacy.
 // @author       lee8oi
 // @match        *://legacy.hackerexperience.com/*
@@ -405,6 +405,8 @@ function checkLine(line, regObj) {
 	for (var prop in regObj) {
 		if (line.match(regObj[prop])) {
 			return true;
+		} else {
+			return false;
 		}
 	}
 }
@@ -423,7 +425,9 @@ function scrapeLog() {
 				if (checkLine(line, localRegs) === true) logsFound = true;
                 else logResult.push(line);
             }
+			console.log(stored.indexOf(line) + " " + line);
             if (stored.indexOf(line) === -1 && line.length > 0 && checkLine(line, fullRegs) === false) {
+				console.log("Pushing line" + line);
                 stored.push(line);
             }
         }
