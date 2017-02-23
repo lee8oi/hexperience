@@ -405,10 +405,9 @@ function checkLine(line, regObj) {
 	for (var prop in regObj) {
 		if (line.match(regObj[prop])) {
 			return true;
-		} else {
-			return false;
 		}
 	}
+	return false;
 }
 
 function scrapeLog() {
