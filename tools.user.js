@@ -126,18 +126,26 @@ function loadIpLogs(dbName) {
     }
 }
 
-function setupIpDbPage(dbtype, dbname) {
+function setupIpDbPage(dbtype, dbname, dbKey) {
     /*jshint multistr: true */
     $('.widget-content').html('\
         <div class="span12">\
             <div class="widget-box text-left" style="margin-left: auto;margin-right: auto; width: 400px;">\
                 <div class="widget-title"><span class="icon"><span class="he16-collect_info"></span></span>\
                     <h5>Select ' + dbname + ' IP</h5>\
+					<button type="button" id="wipedb" key="'+dbKey+'" style="position:absolute;right:10px;top:5px;">Wipe</button>\
                 </div>\
                 <div class="widget-content ' + dbtype + 'ipdb"><div id="logdblist"></div></div>\
             </div>\
         </div>' );
         GM_addStyle('#logdblist { max-height: 400px; overflow: auto; padding: 5px; }');
+		
+	$('#wipedb').click(function() {
+		var key = $(this).attr('key');
+		$('#logdblist').text("");
+		GM_deleteValue(key);
+	});
+
 }
 
 function ipDBPage(){
@@ -149,7 +157,7 @@ function ipDBPage(){
     $('.label.label-info').remove();
     $('#link0').attr('href','log?ipdb'); $('#link0').html('IPDB');
     $('#content-header h1').html('IP Database');
-    setupIpDbPage('internet', 'Internet');
+    setupIpDbPage('internet', 'Internet', 'internetDb');
     loadIpLogs("internetDb");
 }
 
@@ -167,7 +175,7 @@ $('#tablocal').click(function() {
     $('#tabweb').attr('class','link');
     $('#tabignore').attr('class','link');
     $('#tabsaved').attr('class', 'link');
-    setupIpDbPage('local', 'Local');
+    setupIpDbPage('local', 'Local', 'localDb');
     loadIpLogs("localDb");
 });
 
@@ -176,7 +184,7 @@ $('#tabweb').click(function() {
     $('#tablocal').attr('class','link');
     $('#tabignore').attr('class','link');
     $('#tabsaved').attr('class', 'link');
-    setupIpDbPage('web', 'Internet');
+    setupIpDbPage('web', 'Internet', 'internetDb');
     loadIpLogs("internetDb");
 });
 
@@ -185,7 +193,7 @@ $('#tabsaved').click(function() {
     $('#tablocal').attr('class','link');
     $('#tabignore').attr('class','link');
     $('#tabsaved').attr('class', 'link active');
-    setupIpDbPage('save', 'Saved');
+    setupIpDbPage('save', 'Saved', 'savedDb');
     loadIpLogs("savedDb");
 });
 
@@ -194,7 +202,7 @@ $('#tabignore').click(function() {
     $('#tablocal').attr('class','link');
     $('#tabweb').attr('class','link');
     $('#tabsaved').attr('class', 'link');
-    setupIpDbPage('ignore', 'Ignored');
+    setupIpDbPage('ignore', 'Ignored', 'ignoreDb');
     loadIpLogs("ignoreDb");
 });
 
