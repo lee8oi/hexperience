@@ -199,74 +199,6 @@ $('#tabignore').click(function() {
 });
 
 /*
-    Auto ip-scraper
-*/
-
-function uniqueArray(arr) {
-    var unique = [], map = [];
-        for (var i in arr) {
-            if (map[arr[i]]) {
-                continue;
-            } else {
-                map[arr[i]] = true;
-                unique[unique.length] = arr[i];
-            }
-        }
-    return unique;
-}
-
-function scrapeIPs(text) {
-    if (typeof(text) === "string") {
-        var re = /\b\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}\b/g;
-        var found = text.match(re);
-        if (found && found.length > 0) {
-            return uniqueArray(found);
-        }
-    }
-    return;
-}
-
-function saveIPs(dbName, ipArray) {
-    if (typeof(ipArray) == "object" && ipArray.length > 0) {
-        var dbText = GM_getValue(dbName), myIp = GM_getValue("myIp"), igText = GM_getValue("ignoreDb"),
-        saveText = GM_getValue('savedDb');
-        var db = {};
-        if (igText && igText.length > 0) igDb = JSON.parse(igText);
-        if (saveText && saveText.length > 0) saveDb = JSON.parse(saveText);
-        if (dbText && typeof(dbText) === 'string' && dbText.length > 0) {
-            db = JSON.parse(dbText);
-			for (i = 0; i < ipArray.length;i++) {
-                if (ipArray[i] == myIp || igDb[ipArray[i]] || saveDb[ipArray[i]]) continue;
-                if (!db[ipArray[i]] ) db[ipArray[i]] = true;
-            }
-        } else {
-			for (i = 0; i < ipArray.length;i++) {
-                if (ipArray[x] == myIp || igDb[ipArray[x]]) continue;
-                db[ipArray[x]] = true;
-            }
-        }
-        var json = JSON.stringify(db);
-        GM_setValue(dbName, json);
-    }
-}
-
-if (window.location.href.indexOf("legacy.hackerexperience.com/log") != -1) {
-    var log = $('form.log').find('.logarea');
-    if (log && log.length > 0) {
-        text = log.val();
-        saveIPs("localDb", scrapeIPs(text));
-    }
-}
-
-if (window.location.href.indexOf("legacy.hackerexperience.com/internet?view=logs") != -1) {
-    var log = $('form.log').find('.logarea');
-    if (log && log.length > 0) {
-        text = log.val();
-        saveIPs("internetDb", scrapeIPs(text));
-    }
-}
-
-/*
     Alert handling
 */
 
@@ -477,5 +409,91 @@ if ($('#link0').text() == " Log File" || $('#link2').text() == " Log file" || $(
     } else {
         $('form.log #clearlog').before('<input class="btn btn-inverse" id="logmonitor" type="button" value="Monitor" style="width: 80px;"><span>     </span>');
         addClick();
+    }
+}
+
+/*
+    Auto ip-scraper
+*/
+
+function uniqueArray(arr) {
+    var unique = [], map = [];
+        for (var i in arr) {
+            if (map[arr[i]]) {
+                continue;
+            } else {
+                map[arr[i]] = true;
+                unique[unique.length] = arr[i];
+            }
+        }
+    return unique;
+}
+
+function scrapeIPs(text) {
+    if (typeof(text) === "string") {
+        var re = /\b\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}\b/g;
+        var found = text.match(re);
+        if (found && found.length > 0) {
+            return uniqueArray(found);
+        }
+    }
+    return;
+}
+
+function saveIPs(dbName, ipArray) {
+    if (typeof(ipArray) == "object" && ipArray.length > 0) {
+        var dbText = GM_getValue(dbName), myIp = GM_getValue("myIp"), igText = GM_getValue("ignoreDb"),
+        saveText = GM_getValue('savedDb');
+        var db = {};
+        if (igText && igText.length > 0) igDb = JSON.parse(igText);
+        if (saveText && saveText.length > 0) saveDb = JSON.parse(saveText);
+        if (dbText && typeof(dbText) === 'string' && dbText.length > 0) {
+            db = JSON.parse(dbText);
+			for (i = 0; i < ipArray.length;i++) {
+                if (ipArray[i] == myIp || igDb[ipArray[i]] || saveDb[ipArray[i]]) continue;
+                if (!db[ipArray[i]] ) db[ipArray[i]] = true;
+            }
+        } else {
+			for (i = 0; i < ipArray.length;i++) {
+                if (ipArray[x] == myIp || igDb[ipArray[x]]) continue;
+                db[ipArray[x]] = true;
+            }
+        }
+        var json = JSON.stringify(db);
+        GM_setValue(dbName, json);
+    }
+}
+
+function cleanLocal(text) {
+	var result = [];
+	if (text !== "undefined" && text.length > 0) {
+		var split = text.split("\n");
+		for (i = 0; i < split.length; i++) {
+			var line = split[i].trim();
+            if (line.length === 0) continue;
+			if (line.match(/^\d{4}-\d{2}-\d{2}\s\d{2}:\d{2}\s-\slocalhost.*/)) {
+				continue;
+			} else {
+				result.push(line);
+			}
+		}
+		text = result.join("\n");
+	}
+	return text;
+}
+
+if (window.location.href.indexOf("legacy.hackerexperience.com/log") != -1) {
+    var log = $('form.log').find('.logarea');
+    if (log && log.length > 0) {
+        text = log.val();
+        saveIPs("localDb", scrapeIPs(cleanLocal(text)));
+    }
+}
+
+if (window.location.href.indexOf("legacy.hackerexperience.com/internet?view=logs") != -1) {
+    var log = $('form.log').find('.logarea');
+    if (log && log.length > 0) {
+        text = log.val();
+        saveIPs("internetDb", scrapeIPs(text));
     }
 }
