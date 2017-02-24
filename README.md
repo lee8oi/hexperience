@@ -9,6 +9,7 @@ Advanced helper tools for Hacker Experience Legacy.
   * Ignoring an IP causes the ip-scraper to ignore that IP in the future.
   * Saving an IP works like ignore but is saved in a separate list for easier access. Useful for storing IP's for hacking later.
   * Using brute immediately attempts to brute-force hack the IP.
+  * Wipe button for clearing each database in one click.
 * Add's Clear buttons to log boxes to clear the entire log in one click.
 * Add's favorites capability to Hacked Database for marking favorite servers.
 * Log monitoring system.
