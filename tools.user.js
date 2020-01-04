@@ -4,7 +4,7 @@
 // @version      0.9.1
 // @description  Advanced helper tools for Hacker Experience Legacy.
 // @author       lee8oi
-// @match        *://legacy.hackerexperience.com/*
+// @match        *://hackerwars.io/*
 // @run-at document-end
 // @require      https://ajax.googleapis.com/ajax/libs/jquery/2.1.4/jquery.min.js
 // @grant        GM_setValue
